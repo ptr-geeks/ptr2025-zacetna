@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="nalogeOgrevanje.js"></script>
+    <meta charset='utf-8'>
+    <style>
+        body {
+            padding: 0 20px;
+            background: url(https://i.dell.com/sites/csimages/App-Merchandizing_esupport_flatcontent_global_Images/all/bluescreen.png);
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        .lepLink {
+            color: #3366cc;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .lepLink:hover {
+            color: #6699ff;
+        }
+        h1 { text-align: center; }
+        .itemList {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        .item {
+            border: silver solid 1px;
+            min-width: 150px;
+            min-height: 150px;
+            background-color: red;
+        }
+        .button {
+            width: 100px;
+            height: 40px;
+        }
+        .buttonLink {
+            border: #3366cc solid 2px;
+            width: 200px;
+            height: 50px;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            text-decoration: none;
+            color: #3366cc;
+            border-radius: 10px;
+            margin: 10px;
+            box-shadow: 1px 1px 2px silver;
+            font-size: 24px;
+            background-color: #ffffffc0;
+        }
+        .buttonLink:hover {
+            color: #6699ff;
+            border-color: #6699ff;
+        }
+        .buttonLink:active {
+            color: red;
+        }
+        h1 {
+            background: linear-gradient(#e66465, #9198e5);
+        }
+    </style>
+</head>
+<body>
+    <h1>Naslov</h1>
+    <br />
+    <a href="https://google.com" class="buttonLink">Link</a>
+
+    <div class="itemList">
+        <div class="item">Div1</div>
+        <div class="item">Div2</div>
+        <div class="item">Div3</div>
+    </div>
+    <button class="button" onclick="(function() { 
+        //document.getElementsByClassName('item')[0].style.opacity = 0.5; 
+        location.href = 'https://google.com';
+    })()">Button</button>
+</body>
+</html>

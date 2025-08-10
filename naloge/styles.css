@@ -1,0 +1,37 @@
+html, body {
+    font-family: Arial, Helvetica;
+}
+
+.wrap {
+    margin: 20px;
+}
+.topMenu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.menuItem {
+    margin: 10px;
+    padding: 10px;
+    cursor: pointer;
+    color: #3366cc;
+    font-weight: bold;
+}
+.menuItem:hover {
+    color: #6699ff;
+}
+
+h1 {
+    text-align: center;
+}
+
+.logo {
+    float:left;
+    width: 25%;
+    max-width: 150px;
+}
+
+.page {
+    display: none;
+}
