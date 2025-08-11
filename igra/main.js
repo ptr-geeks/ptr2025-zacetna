@@ -2,11 +2,23 @@
 var mouse = { x: 0, y: 0, pressed: false };
 var keyboard = {};
 var canvas, ctx;
-var minionImg;
-var mx = 0; //180;
-var my = 190;
+var minionImgs = [];
+var bgImg;
+
+var sounds = {
+  wee: new Audio("data/wee.mp3")
+};
+sounds.wee.loop = false;
+
 var bgcolor = 0;
 var tocke = 0;
+var fc = 0;
+
+var topx = 400;
+var topy = 100;
+
+var minions = [];
+
 
 window.addEventListener("DOMContentLoaded", function (e) {
   init();
@@ -36,8 +48,14 @@ function init() {
   ctx = canvas.getContext("2d");
 
   // Pripravi sliko minion
-  minionImg = document.createElement("img");
-  minionImg.src = "data/minion.png";
+  for (var i = 0; i <= 2; i++) {
+    minionImg = document.createElement("img");
+    minionImg.src = "data/minion0"+i+".png";
+    minionImgs.push(minionImg);
+  }
+
+  bgImg = document.createElement("img");
+  bgImg.src = "data/logo.png";
 
   // Naloži točke če obstajajo
   tocke = parseInt(localStorage.getItem("tocke"));
@@ -85,19 +103,60 @@ function setTocke(nTocke) {
   localStorage.setItem("tocke", nTocke);
 }
 
+function addMinion(x, y) {
+  var imgIdx = Math.floor(Math.random() * minionImgs.length);
+  minions.push({
+    imgIdx: imgIdx,
+    x: x - minionImgs[imgIdx].width/2,
+    y: y - minionImgs[imgIdx].height/2,
+    angle: Math.random() * Math.PI*2,
+    avel: Math.random() * 1 -0.5,
+    zoom: 0.9 + Math.random() * 0.1,
+    vx: (Math.random())*20,
+    vy: (Math.random())*20,
+  });
+  sounds.wee.play();
+  //var s = new Audio("data/wee.mp3")
+  //s.play();
+
+}
+
 function loop() {
   // Update
-  mx = mouse.x;
-  my = mouse.y;
+  if (mouse.pressed && fc % 1 == 0) {
+    addMinion(mouse.x, mouse.y);
+    /*
+    addMinion(
+      50 + Math.random()*(canvas.width -100),
+      50 + Math.random()*(canvas.height -100)
+    );
+    */
+  }
+
+  for (var i = minions.length -1; i >= 0; i--) {
+    var m = minions[i];
+    m.angle += m.avel;
+    m.zoom = m.zoom *0.95;
+    m.x += m.vx *m.zoom;
+    m.y += m.vy *m.zoom;
+    if (m.zoom < 0.03) {
+      minions.splice(i,1);
+      setTocke(tocke +1);
+    }
+  }
+
+  fc ++;
 
   // Ozadje
-  ctx.fillStyle = bgcolor ? "#FF6666": "#99FF99";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  //ctx.fillStyle = bgcolor ? "#FF6666": "#99FF99";
+  //ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
 
   // Set line width
   ctx.lineWidth = 10;
 
   // Wall
+  ctx.strokeStyle = "#000000";
   ctx.strokeRect(75, 140, 150, 110);
 
   // Door
@@ -113,12 +172,37 @@ function loop() {
   ctx.closePath();
   ctx.stroke();
 
+  // Hair
+  var ta = Math.atan2(mouse.x -topx, mouse.y -topy);
+  if (ta > Math.PI*0.45) ta = Math.PI*0.45;
+  if (ta < -Math.PI*0.45) ta = -Math.PI*0.45;
+  var dx = Math.sin(ta) * 40;
+  var dy = Math.cos(ta) * 40;
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = "#999999";
+
+  for (var i = 0; i < 10; i++) {
+    var px = i*20;
+    ctx.beginPath();
+    ctx.moveTo(topx +px, topy);
+    ctx.lineTo(topx + dx +px, topy - dy);
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  
+
   // Test text
   ctx.font = "bold 32px sans-serif";
   ctx.fillText("Točke: "+tocke, 10, 50);
 
   // Nariši Miniona
-  ctx.drawImage(minionImg, mx - 30, my - 30, 60, 60);
+  for (var i = 0; i < minions.length; i++) {
+    var m = minions[i];
+    var img = minionImgs[m.imgIdx];
+    var size = img.width*m.zoom;
+    drawImageRotated(ctx, img, m.x, m.y, size, size, m.angle);
+  }
 
   requestAnimationFrame(loop);
 }
