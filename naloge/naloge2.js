@@ -83,7 +83,25 @@ function mnozi(a,b) {
     seznam in vrne povprečno vrednost
     števila v seznamu
     (vsota vseh elementov deljena s številom vseh)
+    // testni seznam = [1,3,5,7,9,11,13]
 */
+    function povprecje(seznam) {
+        var sum = 0;
+        for (var i = 0; i < seznam.length; i++) {
+            sum = sum + seznam[i];
+        }
+        return sum / seznam.length;
+    }
+
+    function generirajSeznam() {
+        var r = [];
+        for (var i = 0; i < 10; i++) {
+            r.push(Math.floor(Math.random()*100))
+        }
+        return r;
+    }
+
+    //console.log(sum);
 
 /*
     3. Napiši funkcijo, ki izpiše N-to število
@@ -92,6 +110,13 @@ function mnozi(a,b) {
     Prvi in drugi člen sta 1
     Vsak naslednji člen je vsota prejšnjih dveh
 */
+    s = prompt('Vpisi stevilo za fibonacci')
+    s = parseInt(s)
+    function fibonacci(n) {
+        if (n <= 1) return 1;
+        return fibonacci(n - 1)+fibonacci(n-2); 
+    }
+    console.log(fibonacci(s));
 /*
 function fibr (n){
     if (n == 1) return 1;
@@ -119,6 +144,7 @@ function fib (n){
         var l = [5,12,9,4,123,17,18,21,122];
     Napiši program, ki ga uredi po velikosti z uporabo bubble sort.
 */
+/*
 var l = [5, 12, 9, 4, 123, 17, 18, 21, 122];
 var vmes = 0
 function sort(input) {
@@ -133,8 +159,9 @@ function sort(input) {
     }
     //o oosf
 }
-
+*/
+/*
 sort(l);
 console.log(l);
-
+*/
 
