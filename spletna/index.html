@@ -29,25 +29,6 @@
           <input type="button" name="zazeni" value="Izračunaj (=)" onclick="izracunaj()" />
           <div id="rezultat" style="text-align: center; font-size: 26px;"></div>
           <div id="gumbi" style="border: silver solid 1px;"></div>
-
-          <!--
-          Tole gre v .js fajl
-          
-          function izracunaj() {
-            var op = document.getElementById("opInput").value;
-            var p1 = document.getElementById("p1Input").value;
-            var p2 = document.getElementById("p2Input").value;
-            console.log(p1, op, p2)
-
-            p1 = parseFloat(p1);
-            p2 = parseFloat(p2);
-
-            if (op == "+") {
-              document.getElementById("rezultat").innerHTML = p1 + p2;
-            }
-          }
-          
-          -->
         </div>
 
         <h1>O izdelavi spletnih strani</h1>
@@ -80,6 +61,19 @@
         <div class="text">
           Za pomoč pokliči Anjo.
 
+          <div>
+            Ime:
+            <input type="text" name="ime" placeholder="Vpisi ime" id="ime" />
+            Disciplina:
+            <input type="text" name="disc" placeholder="Disciplina" id="disc" />
+            <input type="button" value="Pošlji" onclick="posljiPlavalca()" />
+            <input type="button" value="Izbriši" onclick="izbrisiPlavalce()" />
+          </div>
+
+          <table class="lepaTabela" id="tabelaPlavalci">
+          </table>
+
+
           <table class="lepaTabela">
             <tr>
               <td>Ime</td>
@@ -97,6 +91,8 @@
               <td>20</td>
             </tr>
           </table>
+
+          
         </div>
       </div>
     </div>
