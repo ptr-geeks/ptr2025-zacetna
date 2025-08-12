@@ -19,6 +19,20 @@ var topy = 100;
 
 var minions = [];
 
+var mapa = [
+  [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+  [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+];
+var squareSize = 100;
+
 
 window.addEventListener("DOMContentLoaded", function (e) {
   init();
@@ -150,11 +164,62 @@ function loop() {
   // Ozadje
   //ctx.fillStyle = bgcolor ? "#FF6666": "#99FF99";
   //ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+  //ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+  for (var i = 0; i < mapa.length; i++) {
+    for (var j = 0; j < mapa[i].length; j++) {
+      if (mapa[i][j] == 0) {
+        // Prazni kvadrat
+        ctx.fillStyle = "#99FF99";
+        ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+      }
+      if (mapa[i][j] == 1) {
+        // Cesta
+        ctx.fillStyle = "gray";
+        ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = "white";
+
+        var mapaGor = mapa[i-1] ? mapa[i-1][j] : 0;
+        var mapaDol = mapa[i+1] ? mapa[i+1][j] : 0;
+        var mapaLevo = mapa[i][j-1] ? mapa[i][j-1] : 0;
+        var mapaDesno = mapa[i][j+1] ? mapa[i][j+1] : 0;
+
+        if (mapaGor == 1) {
+          ctx.beginPath();
+          ctx.moveTo(j * squareSize +squareSize/2, i * squareSize +squareSize/2);
+          ctx.lineTo(j * squareSize +squareSize/2, i * squareSize);
+          ctx.closePath();
+          ctx.stroke();
+        }
+        if (mapaDol == 1) {
+          ctx.beginPath();
+          ctx.moveTo(j * squareSize +squareSize/2, i * squareSize +squareSize/2);
+          ctx.lineTo(j * squareSize +squareSize/2, i * squareSize +squareSize);
+          ctx.closePath();
+          ctx.stroke();
+        }
+        if (mapaLevo == 1) {
+          ctx.beginPath();
+          ctx.moveTo(j * squareSize +squareSize/2, i * squareSize +squareSize/2);
+          ctx.lineTo(j * squareSize, i * squareSize +squareSize/2);
+          ctx.closePath();
+          ctx.stroke();
+        }
+        if (mapaDesno == 1) {
+          ctx.beginPath();
+          ctx.moveTo(j * squareSize +squareSize/2, i * squareSize +squareSize/2);
+          ctx.lineTo(j * squareSize +squareSize, i * squareSize +squareSize/2);
+          ctx.closePath();
+          ctx.stroke();
+        }
+      }
+    }
+  }
 
   // Set line width
   ctx.lineWidth = 10;
 
+  /*
   // Wall
   ctx.strokeStyle = "#000000";
   ctx.strokeRect(75, 140, 150, 110);
@@ -171,6 +236,7 @@ function loop() {
   ctx.lineTo(250, 140);
   ctx.closePath();
   ctx.stroke();
+  */
 
   // Hair
   var ta = Math.atan2(mouse.x -topx, mouse.y -topy);

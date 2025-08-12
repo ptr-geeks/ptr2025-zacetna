@@ -22,14 +22,49 @@
 
     <div class="content">
       <div class="page page-home" style="display: block">
+        <h1>Vpisljiva polja</h1>
+        <div>
+          <div id="zgodovina" style="text-align: center; font-size: 26px;"></div>
+          <input type="text" name="racun" value="" placeholder="racun" id="racunInput" />
+          <input type="button" name="zazeni" value="Izračunaj (=)" onclick="izracunaj()" />
+          <div id="rezultat" style="text-align: center; font-size: 26px;"></div>
+          <div id="gumbi" style="border: silver solid 1px;"></div>
+
+          <!--
+          Tole gre v .js fajl
+          
+          function izracunaj() {
+            var op = document.getElementById("opInput").value;
+            var p1 = document.getElementById("p1Input").value;
+            var p2 = document.getElementById("p2Input").value;
+            console.log(p1, op, p2)
+
+            p1 = parseFloat(p1);
+            p2 = parseFloat(p2);
+
+            if (op == "+") {
+              document.getElementById("rezultat").innerHTML = p1 + p2;
+            }
+          }
+          
+          -->
+        </div>
+
         <h1>O izdelavi spletnih strani</h1>
         <div class="text">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
-          standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
-          make a type specimen book. It has survived not only five centuries, but also the leap into electronic
-          typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-          sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
-          PageMaker including versions of Lorem Ipsum.
+          <h3>CSS Tricks</h3>
+          <div>
+            <h4>Ozadje</h4>
+            <code>html { background-image: url('...') }</code>
+          </div>
+          <div>
+            <h4>Cursor</h4>
+            <code style="cursor: default">.link { cursor: default }</code><br>
+            <code style="cursor: pointer">.link { cursor: pointer }</code><br>
+            <code style="cursor: crosshair">.link { cursor: crosshair }</code><br>
+            <code style="cursor: grab">.link { cursor: grab }</code><br>
+            <code style="cursor: progress">.link { cursor: progress }</code><br>
+          </div>
         </div>
       </div>
       <div class="page page-news">
