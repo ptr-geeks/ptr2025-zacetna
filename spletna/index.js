@@ -106,3 +106,9 @@ function izbrisiPlavalce() {
 
 naloziPlavalce();
 prikaziTabeloPlavalcev();
+
+var results = JSON.parse(localStorage.getItem("results"));
+if (!results) results = [];
+
+
+// var dist = Math.sqrt(Math.pow(A.x - B.x, 2) + Math.pow(A.y - B.y, 2))
