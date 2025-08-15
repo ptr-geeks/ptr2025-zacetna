@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <title>Let z letalom</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+    canvas {
+      display: block;
+      background: #44f3a1;
+    }
+    #score, #Highscore {
+      font-size: 24px;
+      margin: 10px;
+    }
+    #LeaderboardContainer {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 8px;
+    }
+    #LeaderboardContainer h3 {
+      margin: 0 0 5px;
+    }
+    #Leaderboard {
+      list-style: decimal;
+      margin: 0;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div style="position:absolute;top:10px;left:10px;background:rgba(255,255,255,0.8);padding:10px;border-radius:8px;">
+    <p>Trenutni rezultat: <span id="score">0</span></p>
+    <p>Najvišji rezultat: <span id="Highscore">0</span></p>
+  </div>
+
+  <div id="LeaderboardContainer">
+    <h3>Lestvica najboljših</h3>
+    <ol id="Leaderboard"></ol>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.onresize = () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+};
+
+const backgroundImage = new Image();
+backgroundImage.src = "new_yo28.jpg";
+
+const planeImage = new Image();
+planeImage.src = "plane.png";
+
+const cloudImage = new Image();
+cloudImage.src = "cloud.png";
+
+const checkpointsImage = new Image();
+checkpointsImage.src = "bird.png";
+
+const pointSound = new Audio("https://www.soundjay.com/button/beep-07.wav");
+let soundEnabled = false;
+
+let gameOver = false;
+let restartButton;
+
+let plane = {
+  x: canvas.width / 2 - 32,
+  y: canvas.height / 2 - 32,
+  width: 90,
+  height: 60,
+  speed: 5
+};
+
+let keys = {};
+let clouds = [];
+let checkpoints = [];
+
+let score = 0;
+let highScore = localStorage.getItem("HighScore") ? parseInt(localStorage.getItem("HighScore")) : 0;
+document.getElementById("Highscore").textContent = highScore;
+
+let leaderboard = JSON.parse(localStorage.getItem("Leaderboard")) || [];
+
+function updateLeaderboardDisplay() {
+  const el = document.getElementById("Leaderboard");
+  el.innerHTML = "";
+  leaderboard.sort((a, b) => b.score - a.score).slice(0, 5).forEach(entry => {
+    const li = document.createElement("li");
+    li.textContent = `${entry.name}: ${entry.score}`;
+    el.appendChild(li);
+  });
+}
+
+function addToLeaderboard(name, score) {
+  leaderboard.push({ name, score });
+  leaderboard.sort((a, b) => b.score - a.score);
+  leaderboard = leaderboard.slice(0, 5);
+  localStorage.setItem("Leaderboard", JSON.stringify(leaderboard));
+  updateLeaderboardDisplay();
+}
+
+document.addEventListener("keydown", (e) => {
+  keys[e.key.toLowerCase()] = true;
+  if (!soundEnabled) {
+    pointSound.play().catch(() => {});
+    soundEnabled = true;
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  keys[e.key.toLowerCase()] = false;
+});
+
+function spawnCloud() {
+  clouds.push({
+    x: canvas.width,
+    y: Math.random() * (canvas.height - 60),
+    width: 100,
+    height: 30,
+    speed: 2 + Math.random() * 2
+  });
+}
+
+function spawnCheckpoint() {
+  checkpoints.push({
+    x: canvas.width,
+    y: Math.random() * (canvas.height - 80),
+    width: 80,
+    height: 80,
+    passed: false
+  });
+}
+
+function update() {
+  if (keys['w']) plane.y -= plane.speed;
+  if (keys['s']) plane.y += plane.speed;
+  if (keys['a']) plane.x -= plane.speed;
+  if (keys['d']) plane.x += plane.speed;
+
+  plane.x = Math.max(0, Math.min(plane.x, canvas.width - plane.width));
+  plane.y = Math.max(0, Math.min(plane.y, canvas.height - plane.height));
+
+  clouds.forEach(cloud => {
+    cloud.x -= cloud.speed;
+  });
+
+  checkpoints.forEach(cp => {
+    cp.x -= 2;
+    if (!cp.passed &&
+        plane.x < cp.x + cp.width &&
+        plane.x + plane.width > cp.x &&
+        plane.y < cp.y + cp.height &&
+        plane.y + plane.height > cp.y) {
+      cp.passed = true;
+      score++;
+      pointSound.play();
+    }
+  });
+
+  checkpoints = checkpoints.filter(cp => !cp.passed && cp.x + cp.width > 0);
+
+  clouds.forEach(cloud => {
+    if (plane.x < cloud.x + cloud.width &&
+        plane.x + plane.width > cloud.x &&
+        plane.y < cloud.y + cloud.height &&
+        plane.y + plane.height > cloud.y) {
+      gameOver = true;
+
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("HighScore", highScore);
+        document.getElementById("Highscore").textContent = highScore;
+      }
+
+      const playerName = prompt("Napiši ime za lestvico najboljših:");
+      if (playerName) addToLeaderboard(playerName, score);
+
+      createRestartButton();
+    }
+  });
+
+  clouds = clouds.filter(cloud => cloud.x + cloud.width > 0);
+
+  document.getElementById("score").textContent = score;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+  clouds.forEach(cloud => {
+    ctx.drawImage(cloudImage, cloud.x, cloud.y, cloud.width, cloud.height);
+  });
+
+  checkpoints.forEach(cp => {
+    ctx.drawImage(checkpointsImage, cp.x, cp.y, cp.width, cp.height);
+  });
+
+  ctx.drawImage(planeImage, plane.x, plane.y, plane.width, plane.height);
+
+  if (gameOver) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "white";
+    ctx.font = "50px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 20);
+  }
+}
+
+function gameLoop() {
+  if (!gameOver) update();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+function createRestartButton() {
+  restartButton = document.createElement("button");
+  restartButton.textContent = "Igraj znova";
+  restartButton.style.position = "absolute";
+  restartButton.style.top = "65%";
+  restartButton.style.left = "50%";
+  restartButton.style.transform = "translate(-50%, -50%)";
+  restartButton.style.padding = "15px 30px";
+  restartButton.style.fontSize = "20px";
+  restartButton.style.cursor = "pointer";
+  restartButton.style.border = "none";
+  restartButton.style.borderRadius = "10px";
+  restartButton.style.backgroundColor = "#28a745";
+  restartButton.style.color = "white";
+  document.body.appendChild(restartButton);
+
+  restartButton.addEventListener("click", () => {
+    document.body.removeChild(restartButton);
+    resetGame();
+  });
+}
+
+function resetGame() {
+  score = 0;
+  plane.x = canvas.width / 2 - 32;
+  plane.y = canvas.height / 2 - 32;
+  clouds = [];
+  checkpoints = [];
+  gameOver = false;
+  document.getElementById("score").textContent = score;
+}
+
+let imagesLoaded = 0;
+function tryStartGame() {
+  imagesLoaded++;
+  if (imagesLoaded === 4) {
+    spawnCloud();
+    spawnCheckpoint();
+    gameLoop();
+    setInterval(spawnCloud, 2000);
+    setInterval(spawnCheckpoint, 3000);
+  }
+  document.getElementById("score").textContent = score;
+}
+
+backgroundImage.onload = tryStartGame;
+planeImage.onload = tryStartGame;
+cloudImage.onload = tryStartGame;
+checkpointsImage.onload = tryStartGame;
+
+updateLeaderboardDisplay();
+</script>
+</body>
+</html>
