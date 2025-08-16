@@ -8,8 +8,8 @@ var gravity = 9.81;
 var timeFalling = 0;
 var isOnFoot = 0;
 var accelerationInPlane = 40;
-var accelerationInCar = 600;
-var decceleration = 2000;
+var accelerationInCar = 80;
+var decceleration = 90;
 var carImg;
 var houseImg;
 var roadImg;
@@ -56,7 +56,7 @@ var mapa =
     [22, 0, 22, 0, 11, 0, 0, 0, 5, 11, 5, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 5, 11, 12, 12, 12, 12, 12, 12, 11, 0, 0],
     [11, 0, 11, 0, 11, 0, 0, 0, 5, 11, 5, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 5, 11, 5, 5, 5, 5, 5, 5, 11, 0, 0],
     [11, 12, 13, 12, 11, 0, 0, 0, 5, 11, 5, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 5, 11, 5, 5, 5, 5, 5, 5, 11, 0, 0],
-    [21, 0, 21, 0, 0, 0, 0, 0, 5, 11, 5, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 11, 12, 12, 12, 12, 12, 12, 11, 0, 0],
+    [21, 0, 21, 0, 0, 0, 0, 0, 5, 11, 5, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 5, 11, 12, 12, 12, 12, 12, 12, 11, 0, 0],
     [22, 0, 22, 0, 5, 5, 5, 5, 5, 11, 5, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 5, 11, 5, 5, 5, 5, 5, 5, 11, 0, 0],
     [0, 0, 0, 5, 16, 12, 12, 12, 12, 18, 5, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 5, 11, 5, 5, 5, 5, 5, 5, 11, 0, 0],
     [0, 0, 0, 5, 11, 5, 5, 5, 5, 11, 5, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0, 0, 5, 11, 12, 12, 12, 12, 12, 12, 11, 0, 0],
@@ -150,9 +150,7 @@ function movePlayer(deltaTime) {
             playerSpeed += accelerationInCar * deltaTime;           
         }
         if (keyDown.s) {
-            if (playerSpeed > -500) {
-                playerSpeed -= decceleration * deltaTime;
-            }
+            playerSpeed -= decceleration * deltaTime;
         }
         if (keyDown.a) {
             dir += 1.744 * deltaTime;
@@ -202,7 +200,9 @@ function gameLoop(timestamp) {
 
     //segmentLength = 200 / playerY
 
-    
+    ctx.fillStyle = "black";
+    ctx.font = "20px Arial";
+    ctx.fillText(`${"Najprej Rumena, potem Zelena!"}`, canvas.width / 2, 20);
 
     movePlayer(deltaTime);
     //executeGravity(deltaTime);
@@ -235,6 +235,10 @@ function gameLoop(timestamp) {
     );
 
     ctx.restore();
+
+    ctx.fillStyle = "black";
+    ctx.font = "20px Arial";
+    ctx.fillText(`${"Najprej Rumena, potem Zelena!"}`, canvas.width / 2, 20);
 
     requestAnimationFrame(gameLoop);
 }
@@ -517,7 +521,8 @@ function missionTrigger()
 
     if (camX < missionTriggerXYXY.x2 && camX > missionTriggerXYXY.x && camZ < missionTriggerXYXY.y2 && camZ > missionTriggerXYXY.y && playerY === 1)
     {
-        ctx.fillText(`${"Pelji me do doma!"}`, 10, 20);
+        ctx.fillStyle = "black";
+        ctx.fillText(`${"Pelji me do doma!"}`, canvas.width / 2, 50);
     }
     ctx.fillStyle = "#e5ff00ff";
     ctx.fillRect(missionTriggerXYXY.x - (camX) + 1000, missionTriggerXYXY.y - (camZ) + 400, missionTriggerXYXY.x2 - missionTriggerXYXY.x + 0, missionTriggerXYXY.y2 - missionTriggerXYXY.y + 0)
@@ -526,11 +531,12 @@ function missionTrigger()
 function misionEnd()
 {
 
-    if (camX < missionEnd.xe + segmentLength && camX > missionEnd.xe && camZ < missionEnd.ye + segmentLength && camZ > missionEnd.ye && playerY === 1)
+    if (camX < 2 * missionEnd.xe - camX - segmentLength && camX > missionEnd.xe - camX - segmentLength && camZ < 2 * missionEnd.ye - camZ  - segmentLength && camZ > missionEnd.ye - camZ - segmentLength && playerY === 1)
     {
-        ctx.fillText(`${"Na cilju smo!"}`, 10, 20);
+        ctx.fillStyle = "black";
+        ctx.fillText(`${"Na cilju smo!"}`, canvas.width / 2, 50);
         
     }
     ctx.fillStyle = "#1eff00ff";
-        ctx.fillRect(missionEnd.xe - (camX), missionEnd.ye - (camZ) + 0, segmentLength, segmentLength + 0)
+    ctx.fillRect(missionEnd.xe - (camX) + segmentLength, missionEnd.ye - (camZ) + 0 + segmentLength, segmentLength, segmentLength + 0)
 }
